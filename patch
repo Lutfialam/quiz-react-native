@@ -1,0 +1,18 @@
+commit 1c2893974c7ea31e0425990eff03c5c31ee26ef0
+Author: lutfialam <lutfirailfana05@gmail.com>
+Date:   Sun Sep 18 14:41:30 2022 +0700
+
+    Revert "Initial commit"
+    
+    This reverts commit eeddbb0346dbcc199eea1d74f8bd78af4c3ed1d5.
+
+diff --git a/.gitignore b/.gitignore
+index e54b3ff..344481b 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -61,4 +61,3 @@ buck-out/
+ # Ruby / CocoaPods
+ /ios/Pods/
+ /vendor/bundle/
+-.env
+\ No newline at end of file
