@@ -6,10 +6,6 @@ import {login} from '@/services/auth';
 import {useAppDispatch} from '@/app/hooks/redux';
 import {setUser} from '@/state/user/slice/userSlice';
 import {navigate} from '@/app/routes/rootNavigation';
-import {
-  serverStatusType,
-  setServerStatus,
-} from '@/state/statusServer/statusServerSlice';
 
 import colors from '@/styles/colors';
 import Button from '@/components/atoms/button';
@@ -17,6 +13,7 @@ import Input from '@/components/atoms/forms/input';
 import Authentication from '@/components/layouts/authentication';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import isEmptyString from '@/app/helpers/string/isEmptyString';
+import {AlertType, setAlert} from '@/state/alert/alertSlice';
 
 interface Login {}
 
@@ -58,13 +55,13 @@ const Login: React.FC<Login> = () => {
       } else {
         const message = typeof data == 'string' ? data : '';
 
-        const status: serverStatusType = {
-          code: result.code ?? 0,
+        const status: AlertType = {
+          title: 'Error',
           status: 'failed',
           message: `Something went wrong. Try again later! \n ${message}`,
         };
 
-        dispatch(setServerStatus(status));
+        dispatch(setAlert(status));
       }
     }
 

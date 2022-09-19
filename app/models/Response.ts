@@ -23,7 +23,7 @@ class Response<T> implements ResponseType<T> {
 }
 
 export class ResponseError {
-  public data?: unknown;
+  public data?: any;
   public code?: number | undefined;
   public status?: string | undefined;
 

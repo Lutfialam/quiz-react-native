@@ -1,13 +1,13 @@
 import {configureStore} from '@reduxjs/toolkit';
-import serverStatusReducer from './statusServer/statusServerSlice';
-import tabReducer from './tab/tabSlice';
-import userReducer from './user/slice/userSlice';
+import tabReducer from '@/app/state/tab/tabSlice';
+import userReducer from '@/app/state/user/slice/userSlice';
+import alertReducer from '@/app/state/alert/alertSlice';
 
 const store = configureStore({
   reducer: {
     user: userReducer,
+    alert: alertReducer,
     tabScreen: tabReducer,
-    serverStatus: serverStatusReducer,
   },
 });
 

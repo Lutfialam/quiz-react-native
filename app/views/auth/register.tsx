@@ -46,9 +46,6 @@ const Register: React.FC<Register> = () => {
     if (dataIsValidated()) {
       setLoading(true);
       const result = await register(credentials);
-      console.log('====================================');
-      console.log(result);
-      console.log('====================================');
 
       if (result.errors) {
         setCredentials({...credentials, errors: result.errors});

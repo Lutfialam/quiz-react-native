@@ -45,9 +45,6 @@ const TabBar = () => {
 
   const {currentScreen} = useAppSelector(state => state.tabScreen);
   useEffect(() => {}, [currentScreen]);
-  console.log('====================================');
-  console.log(screen);
-  console.log('====================================');
 
   return (
     <Tab.Navigator

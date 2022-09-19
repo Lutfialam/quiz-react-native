@@ -15,7 +15,7 @@ import QuizEntries from '@/views/quiz/entries';
 import {getUser} from '@/services/auth';
 import {setUser} from '@/state/user/slice/userSlice';
 import {useAppDispatch, useAppSelector} from '../hooks/redux';
-import {setServerStatus} from '@/state/statusServer/statusServerSlice';
+import {setAlert} from '@/state/alert/alertSlice';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -43,8 +43,8 @@ const Router = () => {
       setIsLoggedIn(false);
     } else {
       dispatch(
-        setServerStatus({
-          code: 500,
+        setAlert({
+          title: 'Error',
           status: 'failed',
           message: 'Something went wrong',
         }),

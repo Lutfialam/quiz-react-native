@@ -6,15 +6,15 @@ import QuizCard from '@/components/molecules/quiz/quizCard';
 import Authenticated from '@/components/layouts/authenticated';
 
 import {QuizType} from '@/types/quiz';
+import {getQuiz} from '@/services/quiz';
 import listMenu from '@/app/routes/menuList';
 import React, {useEffect, useState} from 'react';
-import {useAppDispatch, useAppSelector} from '@/app/hooks/redux';
 import {navigate} from '@/app/routes/rootNavigation';
-import {getHiddenAnswerQuizList} from '@/services/quiz';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Dimensions, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {logout as clearSession} from '@/services/auth';
 import {resetUser} from '@/state/user/slice/userSlice';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {useAppDispatch, useAppSelector} from '@/app/hooks/redux';
+import {Dimensions, ScrollView, StyleSheet, Text, View} from 'react-native';
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
@@ -27,7 +27,7 @@ const Home = () => {
   const getData = async () => {
     setLoading(true);
 
-    const result = await getHiddenAnswerQuizList(1);
+    const result = await getQuiz(1);
     const data = result.body?.data ?? [];
     setQuiz(data.slice(0, 5));
 

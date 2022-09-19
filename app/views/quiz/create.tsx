@@ -26,7 +26,7 @@ import SelectSearch, {
 } from '@/components/atoms/forms/selectSearch';
 import {ResponseError} from '@/models/Response';
 import {useAppDispatch} from '@/app/hooks/redux';
-import {setServerStatus} from '@/state/statusServer/statusServerSlice';
+import {AlertType, setAlert} from '@/state/alert/alertSlice';
 
 interface Create {}
 
@@ -186,22 +186,35 @@ const Create: React.FC<Create> = () => {
     return isValid;
   };
 
+  const setError = (errors: ResponseError) => {
+    if (typeof errors.data == 'string') {
+      const alert: AlertType = {
+        title: 'Error',
+        status: 'failed',
+        message: errors.data,
+      };
+
+      dispatch(setAlert(alert));
+    } else {
+      setQuiz({...quiz, errors: {...(errors?.data?.errors ?? {})}});
+    }
+  };
+
   const submit = async () => {
     if (isValidated()) {
       const result = await addQuiz(quiz);
-      if (result.errors) {
-        const errors = result.errors as ResponseError;
-        if (typeof errors.data == 'string') {
-          dispatch(
-            setServerStatus({
-              code: errors.code ?? 0,
-              message: errors.data,
-              status: 'failed',
-            }),
-          );
-        }
+
+      if (result.status == 'success') {
+        const alert: AlertType = {
+          title: 'Success',
+          status: 'success',
+          message: 'Quiz is successfully added',
+        };
+
+        dispatch(setAlert(alert));
+        navigate('quiz_entries');
       }
-      if (result.status == 'success') navigate('quiz_entries');
+      if (result.errors) setError(result.errors as ResponseError);
     }
   };
 

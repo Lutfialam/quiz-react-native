@@ -1,7 +1,7 @@
 import Quiz from '@/models/Quiz';
-import {QuizType, QuizTypePagination} from '@/types/quiz';
 import instance from '@/services/instance';
 import ResponseType from '@/types/response';
+import {QuizType, QuizTypePagination} from '@/types/quiz';
 import Response, {ResponseError} from '@/models/Response';
 
 export const getQuiz = async (page?: number, search?: string) => {
@@ -68,12 +68,17 @@ export const getHiddenAnswerQuiz = async (quiz_id: number) => {
 export const addQuiz = async (item: QuizType) => {
   const quiz = new Quiz();
   const form = quiz.toFormData(item);
-  instance.defaults.headers.common['Content-Type'] = 'multipart/form-data';
 
   let data: ResponseType<QuizType> = {};
+  const config = {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  };
+  // instance.defaults.headers.common['Content-Type'] = 'multipart/form-data';
 
   await instance
-    .post('/api/quiz', form)
+    .post('/api/quiz', form, config)
     .then(response => (data = new Response(response)))
     .catch(error => (data.errors = new ResponseError(error)));
 
@@ -87,11 +92,16 @@ export const updateQuiz = async (item: Quiz, deleted: number[]) => {
   form.append('_method', 'PUT');
   form.append('deleted_question', JSON.stringify(deleted));
 
-  instance.defaults.headers.common['Content-Type'] = 'multipart/form-data';
-
   let data: ResponseType<QuizType> = {};
+  const config = {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  };
+  // instance.defaults.headers.common['Content-Type'] = 'multipart/form-data';
+
   await instance
-    .post(`/api/quiz/${quiz.id}`, form)
+    .post(`/api/quiz/${quiz.id}`, form, config)
     .then(response => (data = new Response(response)))
     .catch(error => (data.errors = new ResponseError(error)));
 

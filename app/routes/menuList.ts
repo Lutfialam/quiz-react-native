@@ -21,12 +21,7 @@ const listMenu = (): CardMenuType[] => {
       iconName: 'create',
       label: 'Create quiz',
       backgroundColor: colors.green,
-      onPress: () => {
-        console.log('====================================');
-        console.log('asd');
-        console.log('====================================');
-        navigate('quiz_create');
-      },
+      onPress: () => navigate('quiz_create'),
     },
     {
       size,

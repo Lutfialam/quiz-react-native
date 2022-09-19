@@ -1,7 +1,3 @@
-import {useAppDispatch, useAppSelector} from '@/app/hooks/redux';
-import {resetServerStatus} from '@/state/statusServer/statusServerSlice';
-import colors from '@/styles/colors';
-import React, {useEffect, useRef} from 'react';
 import {
   Animated,
   Dimensions,
@@ -11,7 +7,12 @@ import {
   Text,
   View,
 } from 'react-native';
+
+import colors from '@/styles/colors';
+import React, {useEffect, useRef} from 'react';
+import {resetAlert} from '@/state/alert/alertSlice';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {useAppDispatch, useAppSelector} from '@/app/hooks/redux';
 
 interface Authentication {
   loading?: boolean;
@@ -29,41 +30,41 @@ type AuthenticationType = React.FunctionComponent<Authentication> & {
 const Authentication: AuthenticationType = ({loading, children}) => {
   const dispatch = useAppDispatch();
   const notification = useRef(new Animated.Value(0)).current;
-  const {user, serverStatus} = useAppSelector(state => state);
+  const {user, alert} = useAppSelector(state => state);
+  const styles = defaultStyles(alert.status);
 
-  const closeNotification = () => {
+  const closeAlert = () => {
     Animated.timing(notification, {
       toValue: 0,
       duration: 500,
       useNativeDriver: false,
     }).start(({finished}) => {
-      if (finished) dispatch(resetServerStatus());
+      if (finished) dispatch(resetAlert());
     });
   };
 
   useEffect(() => {
     Animated.timing(notification, {
-      toValue: serverStatus.message != '' ? 1 : 0,
+      toValue: alert.message != '' ? 1 : 0,
       duration: 500,
       useNativeDriver: false,
     }).start();
-  }, [user, serverStatus]);
+  }, [user, alert]);
 
   return (
     <SafeAreaView>
       <ScrollView contentContainerStyle={styles.container}>
         {children}
       </ScrollView>
-      {serverStatus.message != '' && (
-        <Animated.View
-          style={[styles.errorNotificationContainer, {opacity: notification}]}>
-          <View style={styles.errorNotification}>
-            <Text style={styles.errorText}>{serverStatus.message}</Text>
+      {alert.message != '' && (
+        <Animated.View style={[styles.alertContainer, {opacity: notification}]}>
+          <View style={styles.alert}>
+            <Text style={styles.alertMessage}>{alert.message}</Text>
           </View>
           <Ionicons
             name="close-circle-outline"
             style={styles.closeButton}
-            onPress={closeNotification}
+            onPress={closeAlert}
           />
         </Animated.View>
       )}
@@ -74,21 +75,57 @@ const Authentication: AuthenticationType = ({loading, children}) => {
 const Card: React.FC<Card> = ({children}) => {
   return (
     <>
-      <Text style={styles.logo}>QUIZ APP</Text>
-      <View style={styles.cardStyle}>{children}</View>
+      <Text style={cardStyle.logo}>QUIZ APP</Text>
+      <View style={cardStyle.cardStyle}>{children}</View>
     </>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    width: '100%',
-    minHeight: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
+const defaultStyles = (alertStatus: string) => {
+  const alertBackground = () => {
+    if (alertStatus == 'failed') return colors.red;
+    if (alertStatus == 'success') return colors.green;
+
+    return colors.primary;
+  };
+
+  return StyleSheet.create({
+    container: {
+      display: 'flex',
+      width: '100%',
+      minHeight: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+    },
+    alertContainer: {
+      bottom: 0,
+      margin: 15,
+      padding: 15,
+      borderRadius: 15,
+      position: 'absolute',
+      width: Dimensions.get('window').width - 30,
+      backgroundColor: alertBackground(),
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    alert: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    alertMessage: {
+      color: 'white',
+    },
+    closeButton: {
+      color: 'white',
+      fontSize: 20,
+    },
+  });
+};
+
+const cardStyle = StyleSheet.create({
   logo: {
     fontSize: 30,
     fontWeight: 'bold',
@@ -108,30 +145,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-  },
-  errorNotificationContainer: {
-    bottom: 0,
-    margin: 15,
-    padding: 15,
-    borderRadius: 15,
-    position: 'absolute',
-    width: Dimensions.get('window').width - 30,
-    backgroundColor: colors.red,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  errorNotification: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  errorText: {
-    color: 'white',
-  },
-  closeButton: {
-    color: 'white',
-    fontSize: 20,
   },
 });
 
