@@ -1,7 +1,7 @@
 import {configureStore} from '@reduxjs/toolkit';
-import tabReducer from '@/app/state/tab/tabSlice';
-import userReducer from '@/app/state/user/slice/userSlice';
-import alertReducer from '@/app/state/alert/alertSlice';
+import tabReducer from '@/state/tab/tabSlice';
+import userReducer from '@/state/user/slice/userSlice';
+import alertReducer from '@/state/alert/alertSlice';
 
 const store = configureStore({
   reducer: {

@@ -1,6 +1,5 @@
 import {CategoryType} from '@/types/category';
 import {QuestionType} from '@/types/question';
-import {addQuiz, getQuiz, getQuizById} from '@/services/quiz';
 import {QuizType} from '@/types/quiz';
 
 /**

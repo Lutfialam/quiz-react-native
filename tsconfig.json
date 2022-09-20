@@ -13,15 +13,19 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@/components/*": ["./app/components/*"],
-      "@/services/*": ["./app/services/*"],
-      "@/assets/*": ["./app/assets/*"],
-      "@/models/*": ["./app/models/*"],
-      "@/styles/*": ["./app/styles/*"],
-      "@/types/*": ["./app/types/*"],
+      "@/app/*": ["./app/*"],
       "@/views/*": ["./app/views/*"],
-      "@/state/*": ["./app/state/*"],
-      "@/app/*": ["./app/*"]
+      "@/assets/*": ["./app/assets/*"],
+      "@/styles/*": ["./app/assets/styles/*"],
+      "@/components/*": ["./app/components/*"],
+
+      "@/features/*": ["./app/features/*"],
+      "@/types/*": ["./app/features/types/*"],
+      "@/state/*": ["./app/features/state/*"],
+      "@/hooks/*": ["./app/features/hooks/*"],
+      "@/models/*": ["./app/features/models/*"],
+      "@/helpers/*": ["./app/features/helpers/*"],
+      "@/services/*": ["app/features/services/*"],
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],

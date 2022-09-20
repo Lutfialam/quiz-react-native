@@ -1,7 +1,7 @@
-import colors from '@/styles/colors';
+import colors from '@/assets/styles/colors';
 import React, {useEffect, useRef} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useAppDispatch, useAppSelector} from '@/app/hooks/redux';
+import {useAppDispatch, useAppSelector} from '@/hooks/redux';
 import {
   Text,
   View,
@@ -9,16 +9,20 @@ import {
   StyleSheet,
   Dimensions,
   SafeAreaView,
+  ViewStyle,
+  StyleProp,
+  Image,
 } from 'react-native';
 import {resetAlert} from '@/state/alert/alertSlice';
 
 interface Authenticated {
   loading?: boolean;
+  containerStyle?: StyleProp<ViewStyle>;
   children: React.ReactNode;
 }
 
 const Authenticated: React.FC<Authenticated> = props => {
-  const {loading, children} = props;
+  const {loading, containerStyle, children} = props;
 
   const dispatch = useAppDispatch();
   const notification = useRef(new Animated.Value(0)).current;
@@ -37,20 +41,27 @@ const Authenticated: React.FC<Authenticated> = props => {
 
   useEffect(() => {
     Animated.timing(notification, {
-      toValue: alert.message != '' ? 1 : 0,
       duration: 500,
       useNativeDriver: false,
+      toValue: alert.message != '' ? 1 : 0,
     }).start();
+
+    const timeout = setTimeout(closeAlert, 4000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [user, alert]);
 
   return (
     <SafeAreaView>
       {loading ? (
         <View style={styles.loadingContainer}>
-          <Text>Loading...</Text>
+          <Image source={require('@/assets/images/loading.gif')} />
+          <Text style={styles.loadingText}>Loading ...</Text>
         </View>
       ) : (
-        <View style={styles.container}>{children}</View>
+        <View style={[styles.container, containerStyle]}>{children}</View>
       )}
       {alert.message != '' && (
         <Animated.View style={[styles.alertContainer, {opacity: notification}]}>
@@ -89,6 +100,10 @@ const defaultStyles = (alertStatus: string) => {
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
+    },
+    loadingText: {
+      marginTop: 30,
+      fontSize: 18,
     },
     alertContainer: {
       bottom: 0,

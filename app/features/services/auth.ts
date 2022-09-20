@@ -36,8 +36,14 @@ export const register = async (user: UserType) => {
   form.append('password_confirmation', user.passwordConfirmation ?? '');
   if (user.image) form.append('image', user.image);
 
+  const config = {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  };
+
   await instance
-    .post('/api/auth/register', form)
+    .post('/api/auth/register', form, config)
     .then(response => (data = new Response(response)))
     .catch(error => (data.errors = new ResponseError(error)));
 

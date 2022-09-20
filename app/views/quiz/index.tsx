@@ -1,18 +1,20 @@
+import useDebounce from '@/hooks/useDebounce';
+import Button from '@/components/atoms/button';
+import Input from '@/components/atoms/forms/input';
 import QuizCard from '@/components/molecules/quiz/quizCard';
 import Authenticated from '@/components/layouts/authenticated';
-import React, {useCallback, useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+
 import {QuizType} from '@/types/quiz';
-import Input from '@/components/atoms/forms/input';
+import {useAppSelector} from '@/hooks/redux';
+import React, {useEffect, useState} from 'react';
 import {getQuiz as getQuizList} from '@/services/quiz';
-import Button from '@/components/atoms/button';
-import useDebounce from '@/app/hooks/useDebounce';
+import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
 
 interface Quiz {}
 
 const Quiz: React.FC<Quiz> = () => {
   const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [loadMoreProccess, setloadMoreProccess] = useState(false);
   const [quiz, setQuiz] = useState<QuizType[]>([]);
   const [page, setPage] = useState({
@@ -20,42 +22,41 @@ const Quiz: React.FC<Quiz> = () => {
     lastPage: 1,
   });
 
+  const {user} = useAppSelector(state => state);
   const searchDebounce = useDebounce(search, 500);
 
-  const getQuiz = async (currentPage: number) => {
+  const quizData = async (currentPage: number) => {
     const result = await getQuizList(currentPage, searchDebounce);
-
     const data = result.body?.data ?? [];
-    const lastPage = result.body?.last_page ?? 1;
-    const newQuiz =
-      quiz.length > 0 && search.length <= 0 ? [...quiz, ...data] : data;
 
-    setQuiz(newQuiz);
+    const lastPage = result.body?.last_page ?? 1;
     setPage({...page, currentPage, lastPage});
+
     return data;
   };
 
-  // const loadMore = async (currentPage: number) => {
-  //   setloadMoreProccess(true)
+  const getData = async (currentPage: number) => {
+    setLoading(true);
+    setQuiz(await quizData(currentPage));
+    setLoading(false);
+  };
 
-  //   const newQuiz = await getQuiz(currentPage);
-  //   setQuiz([...quiz, ...newQuiz]);
+  const loadMore = async (currentPage: number) => {
+    setloadMoreProccess(true);
 
-  //   setloadMoreProccess(false)
-  // }
+    const data = await quizData(currentPage);
+    setQuiz([...quiz, ...data]);
+
+    setloadMoreProccess(false);
+  };
 
   const onSearch = (name: string, value: string) => {
     setSearch(value);
   };
 
   useEffect(() => {
-    if (quiz.length <= 0 || searchDebounce != '') {
-      setLoading(true);
-      getQuiz(page.currentPage);
-      setLoading(false);
-    } else {
-      setQuiz(quiz);
-    }
+    const dataIsEmpty = quiz.length <= 0 || searchDebounce != '';
+    dataIsEmpty ? getData(page.currentPage) : setQuiz(quiz);
 
     return () => {
       setPage({currentPage: 1, lastPage: 1});
@@ -79,18 +80,28 @@ const Quiz: React.FC<Quiz> = () => {
         />
 
         {quiz.map((item, index) => (
-          <QuizCard key={index} quiz={item} />
+          <QuizCard
+            key={index}
+            quiz={item}
+            hideAction={user.level != 'admin'}
+          />
         ))}
 
-        <Button
-          rounded
-          title="Load more"
-          style={styles.loadMoreButton}
-          isHide={page.currentPage == page.lastPage}
-          onPress={() => {
-            getQuiz(page.currentPage + 1);
-          }}
-        />
+        {loadMoreProccess ? (
+          <View style={styles.loadMoreLoadingContainer}>
+            <Image source={require('@/assets/images/loading.gif')} />
+          </View>
+        ) : (
+          <Button
+            rounded
+            title="Load more"
+            style={styles.loadMoreButton}
+            isHide={page.currentPage == page.lastPage}
+            onPress={() => {
+              loadMore(page.currentPage + 1);
+            }}
+          />
+        )}
       </ScrollView>
     </Authenticated>
   );
@@ -102,9 +113,15 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   loadMoreButton: {
-    marginTop: 15,
-    marginBottom: 10,
+    marginVertical: 15,
     alignSelf: 'center',
+  },
+  loadMoreLoadingContainer: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginVertical: 15,
   },
 });
 

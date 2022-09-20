@@ -1,4 +1,4 @@
-import colors from '@/styles/colors';
+import colors from '@/assets/styles/colors';
 import {Dimensions} from 'react-native';
 import {navigate} from './rootNavigation';
 

@@ -8,11 +8,11 @@ import {
   View,
 } from 'react-native';
 
-import colors from '@/styles/colors';
+import colors from '@/assets/styles/colors';
 import React, {useEffect, useRef} from 'react';
 import {resetAlert} from '@/state/alert/alertSlice';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useAppDispatch, useAppSelector} from '@/app/hooks/redux';
+import {useAppDispatch, useAppSelector} from '@/hooks/redux';
 
 interface Authentication {
   loading?: boolean;
@@ -49,6 +49,12 @@ const Authentication: AuthenticationType = ({loading, children}) => {
       duration: 500,
       useNativeDriver: false,
     }).start();
+
+    const timeout = setTimeout(closeAlert, 4000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [user, alert]);
 
   return (
@@ -56,6 +62,9 @@ const Authentication: AuthenticationType = ({loading, children}) => {
       <ScrollView contentContainerStyle={styles.container}>
         {children}
       </ScrollView>
+      {/* {loading && (
+
+      )} */}
       {alert.message != '' && (
         <Animated.View style={[styles.alertContainer, {opacity: notification}]}>
           <View style={styles.alert}>

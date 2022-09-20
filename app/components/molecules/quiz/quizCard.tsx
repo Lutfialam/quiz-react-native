@@ -1,5 +1,5 @@
 import React from 'react';
-import colors from '@/styles/colors';
+import colors from '@/assets/styles/colors';
 import {QuizType} from '@/types/quiz';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import IonIcons from 'react-native-vector-icons/Ionicons';

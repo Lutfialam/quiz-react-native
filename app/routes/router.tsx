@@ -5,7 +5,7 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack';
 
 import TabBar from '@/app/routes/tabBar';
 
-import colors from '@/styles/colors';
+import colors from '@/assets/styles/colors';
 import Login from '@/views/auth/login';
 import QuizEdit from '@/views/quiz/edit';
 import Register from '@/views/auth/register';
@@ -14,8 +14,8 @@ import QuizEntries from '@/views/quiz/entries';
 
 import {getUser} from '@/services/auth';
 import {setUser} from '@/state/user/slice/userSlice';
-import {useAppDispatch, useAppSelector} from '../hooks/redux';
-import {setAlert} from '@/state/alert/alertSlice';
+import {useAppDispatch, useAppSelector} from '@/hooks/redux';
+import {AlertType, setAlert} from '@/state/alert/alertSlice';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -42,13 +42,15 @@ const Router = () => {
     } else if (result.errors?.code == 401) {
       setIsLoggedIn(false);
     } else {
-      dispatch(
-        setAlert({
-          title: 'Error',
-          status: 'failed',
-          message: 'Something went wrong',
-        }),
-      );
+      const errorIsString = typeof result.errors?.data == 'string';
+
+      const alert: AlertType = {
+        title: 'Error',
+        status: 'failed',
+        message: errorIsString ? result.errors?.data : 'Something went wrong',
+      };
+
+      dispatch(setAlert(alert));
     }
   };
 

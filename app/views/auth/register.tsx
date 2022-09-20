@@ -1,19 +1,22 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text} from 'react-native';
 
-import colors from '@/styles/colors';
 import {UserType} from '@/types/user';
 import {register} from '@/services/auth';
 import {navigate} from '@/app/routes/rootNavigation';
 
+import colors from '@/assets/styles/colors';
 import Button from '@/components/atoms/button';
 import Input from '@/components/atoms/forms/input';
 import Authentication from '@/components/layouts/authentication';
-import isEmptyString from '@/app/helpers/string/isEmptyString';
+import isEmptyString from '@/helpers/string/isEmptyString';
+import {AlertType, setAlert} from '@/state/alert/alertSlice';
+import {useAppDispatch} from '@/hooks/redux';
 
 interface Register {}
 
 const Register: React.FC<Register> = () => {
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
   const [credentials, setCredentials] = useState<UserType>({} as UserType);
 
@@ -51,7 +54,16 @@ const Register: React.FC<Register> = () => {
         setCredentials({...credentials, errors: result.errors});
       }
 
-      if (result.body) navigate('login');
+      if (result.body) {
+        const alert: AlertType = {
+          title: 'Success',
+          status: 'success',
+          message: 'Your account is successfully created!',
+        };
+
+        dispatch(setAlert(alert));
+        navigate('login');
+      }
       setLoading(false);
     }
   };

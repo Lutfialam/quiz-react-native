@@ -3,16 +3,16 @@ import {StyleSheet, Text} from 'react-native';
 
 import {UserType} from '@/types/user';
 import {login} from '@/services/auth';
-import {useAppDispatch} from '@/app/hooks/redux';
+import {useAppDispatch} from '@/hooks/redux';
 import {setUser} from '@/state/user/slice/userSlice';
 import {navigate} from '@/app/routes/rootNavigation';
 
-import colors from '@/styles/colors';
+import colors from '@/assets/styles/colors';
 import Button from '@/components/atoms/button';
 import Input from '@/components/atoms/forms/input';
 import Authentication from '@/components/layouts/authentication';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import isEmptyString from '@/app/helpers/string/isEmptyString';
+import isEmptyString from '@/helpers/string/isEmptyString';
 import {AlertType, setAlert} from '@/state/alert/alertSlice';
 
 interface Login {}

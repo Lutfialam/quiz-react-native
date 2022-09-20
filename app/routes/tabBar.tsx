@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Quiz from '@/views/quiz';
 import Home from '@/views/home';
-import colors from '@/styles/colors';
+import colors from '@/assets/styles/colors';
 import Profile from '@/views/profile';
 
 import {
@@ -12,7 +12,7 @@ import {
 import {Dimensions, Text} from 'react-native';
 import {setTab} from '@/state/tab/tabSlice';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useAppDispatch, useAppSelector} from '@/app/hooks/redux';
+import {useAppDispatch, useAppSelector} from '@/hooks/redux';
 
 const tabBarOption = (
   icon: string,

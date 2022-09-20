@@ -1,4 +1,4 @@
-import colors from '@/styles/colors';
+import colors from '@/assets/styles/colors';
 import {QuizType} from '@/types/quiz';
 import React, {useEffect, useRef, useState} from 'react';
 import {
@@ -17,15 +17,15 @@ import Divider from '@/components/atoms/divider';
 import Input from '@/components/atoms/forms/input';
 import Authenticated from '@/components/layouts/authenticated';
 
-import useDebounce from '@/app/hooks/useDebounce';
-import {addQuiz} from '@/services/quiz';
-import {getCategory} from '@/services/category';
+import useDebounce from '@/hooks/useDebounce';
+import {addQuiz} from '@/features/services/quiz';
+import {getCategory} from '@/features/services/category';
 import {navigate} from '@/app/routes/rootNavigation';
 import SelectSearch, {
   SelectSearchValue,
 } from '@/components/atoms/forms/selectSearch';
 import {ResponseError} from '@/models/Response';
-import {useAppDispatch} from '@/app/hooks/redux';
+import {useAppDispatch} from '@/hooks/redux';
 import {AlertType, setAlert} from '@/state/alert/alertSlice';
 
 interface Create {}

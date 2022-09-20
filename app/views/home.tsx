@@ -1,4 +1,4 @@
-import colors from '@/styles/colors';
+import colors from '@/assets/styles/colors';
 import Card from '@/components/atoms/card';
 import CardMenu from '@/components/atoms/cardMenu';
 import Dropdown from '@/components/atoms/dropdown';
@@ -13,12 +13,22 @@ import {navigate} from '@/app/routes/rootNavigation';
 import {logout as clearSession} from '@/services/auth';
 import {resetUser} from '@/state/user/slice/userSlice';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useAppDispatch, useAppSelector} from '@/app/hooks/redux';
-import {Dimensions, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {useAppDispatch, useAppSelector} from '@/hooks/redux';
+import {
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import {AlertType, setAlert} from '@/state/alert/alertSlice';
+const defaultImage = require('@/assets/images/default.png');
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
   const [quiz, setQuiz] = useState<QuizType[]>([]);
+  const [profilePicture, setProfilePicture] = useState<any>(defaultImage);
 
   const dispatch = useAppDispatch();
   const user = useAppSelector(state => state.user);
@@ -37,6 +47,17 @@ const Home = () => {
   const logout = async () => {
     await clearSession();
     dispatch(resetUser());
+  };
+
+  const onProfileError = () => {
+    const alert: AlertType = {
+      status: 'failed',
+      title: 'Profile picture error',
+      message: 'Cannot set your profile picture. Try to change another picture',
+    };
+
+    setProfilePicture(defaultImage);
+    dispatch(setAlert(alert));
   };
 
   useEffect(() => {
@@ -58,7 +79,15 @@ const Home = () => {
 
           <Dropdown position="right">
             <Dropdown.Button>
-              <View style={styles.imageWrapper}></View>
+              <Image
+                source={profilePicture}
+                onError={onProfileError}
+                style={styles.profile}
+                borderRadius={100}
+                resizeMode={'contain'}
+                defaultSource={defaultImage}
+              />
+              {/* <View style={styles.imageWrapper}></View> */}
             </Dropdown.Button>
             <Dropdown.Content>
               <Dropdown.Item style={styles.dropdownItem} onPress={logout}>
@@ -71,36 +100,40 @@ const Home = () => {
 
         <Card
           background={colors.primary}
-          height={height * 0.2}
+          height={height * 0.25}
           style={styles.card}>
           <Text style={styles.cardText}>lets play and {'\n'}be the first!</Text>
           <Text style={styles.cardTextTotal}>Quiz you have done: 0</Text>
         </Card>
 
-        <Text style={styles.menuText}>Menu list</Text>
-        <View style={styles.menuList}>
-          {listMenu()
-            .slice(0, 4)
-            .map((item, index) => (
+        {user.level == 'admin' && (
+          <>
+            <Text style={styles.menuText}>Menu list</Text>
+            <View style={styles.menuList}>
+              {listMenu()
+                .slice(0, 4)
+                .map((item, index) => (
+                  <CardMenu
+                    key={index}
+                    size={item.size}
+                    label={item.label}
+                    onPress={item.onPress}
+                    style={styles.menuItem}
+                    backgroundColor={item.backgroundColor}>
+                    <CardMenu.Icon iconName={item.iconName} />
+                  </CardMenu>
+                ))}
               <CardMenu
-                key={index}
-                size={item.size}
-                label={item.label}
-                onPress={item.onPress}
+                label="Other menu"
+                size={width * 0.155}
                 style={styles.menuItem}
-                backgroundColor={item.backgroundColor}>
-                <CardMenu.Icon iconName={item.iconName} />
+                backgroundColor={colors.blue}
+                onPress={() => {}}>
+                <CardMenu.Icon iconName="apps" />
               </CardMenu>
-            ))}
-          <CardMenu
-            label="Other menu"
-            size={width * 0.155}
-            style={styles.menuItem}
-            backgroundColor={colors.blue}
-            onPress={() => {}}>
-            <CardMenu.Icon iconName="apps" />
-          </CardMenu>
-        </View>
+            </View>
+          </>
+        )}
 
         <Text style={styles.newestQuizText}>Latest quiz</Text>
         <View style={styles.quizListWrapper}>
@@ -130,11 +163,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: 10,
-    marginBottom: 20,
+    marginBottom: 30,
   },
   sayText: {
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  profile: {
+    backgroundColor: 'white',
+    width: 80,
+    height: 80,
   },
   logoutIcon: {
     marginRight: 15,
